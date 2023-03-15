@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace = "kr.co.dong.boardMapper">
+
+	<!--  글 전체목록 -->
+	<select id="List" parameterType="java.lang.Integer" resultType="BoardDTO">
+		SELECT b_p_bno, b_title, b_date, u_p_id, b_v_cnt
+		FROM board
+		where b_state = 1
+		LIMIT #{startList}, #{listSize}
+	</select>
+	<!--  전체 글 개수 -->
+	<select id="paging" resultType="java.lang.Integer">
+		SELECT count(*)
+		FROM board
+	</select>
+
+	<!--  글 읽기 -->
+	<select id="board" parameterType="java.lang.Integer" resultType="BoardDTO">
+		SELECT *
+		FROM board
+		where b_p_bno = #{b_p_bno}
+	</select>
+
+	<!--  글 쓰기 -->
+	<insert id="register" parameterType="BoardDTO">
+		INSERT INTO board(b_p_bno, b_p_category, b_title, b_content, u_p_id, b_date, b_v_cnt, b_state)
+			 VALUES (#{b_p_bno}, 3, #{b_title}, #{b_content}, #{u_p_id}, curdate(), 0, 1)
+	</insert>
+	
+	<!--  글 수정 -->
+	<update id="update" parameterType="BoardDTO">
+		update board
+		   set b_title = #{b_title},
+		   		b_content = #{b_content},
+		   		b_date = curdate(),
+		 where b_p_bno = #{b_p_bno} 
+	</update>
+	
+	<!--  글 삭제 del 컬럼을 작성하여 1로 변경 --> 
+	<update id="delete" parameterType="java.lang.Integer">
+		update board
+		   set del = 0
+		 where b_p_bno = #{b_p_bno}
+	</update>
+	
+	<!--  회원가입 -->
+	<insert id="Join" parameterType="JointempDTO">
+		INSERT INTO jointemp(id, name, password, tel, address1, address2, email)
+			 VALUES (#{id}, #{name}, #{password}, #{tel}, #{address1}, #{address2}, #{email})
+	</insert>
+	
+	<!--  코드 리스트 조회 -->    
+	<select id="CodeList" parameterType="CodeDTO" resultType="CodeDTO">
+		SELECT *
+		  FROM code
+		 WHERE codeNm = #{codeNm}
+	</select>
+	
+	<!--  로그인 처리를 위한 SQL -->
+	<select id="login" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT id,name
+		  FROM springuser
+		 WHERE id = #{id}
+		   AND password = #{password}	
+	</select>
+	
+	  
+	<!-- 댓글목록 조회(게시글번호에 해당하는 조회) -->
+	<!--
+	<select id="detail1" parameterType="java.lang.Integer" resultType="BoardReply">
+		SELECT reno, rewriter, rememo, redate, bno
+		  FROM board_reply
+		 WHERE bno = #{bno}
+	  ORDER BY reno desc
+	</select>
+	-->
+	<!-- 댓글 쓰기 -->
+	<!--
+	<insert id="reply" parameterType="BoardReply">
+		INSERT INTO board_reply(rewriter, rememo, redate, bno)
+			 VALUES (#{rewriter}, #{rememo}, curdate(), #{bno})
+	</insert>
+	-->
+	<!-- 해당 댓글 읽기  -->
+	<!--
+	<select id="detailReply" parameterType="java.lang.Integer" resultType="BoardReply">
+		SELECT reno, rewriter, rememo, redate, bno
+		  FROM board_reply
+		 WHERE reno = #{reno}
+	</select>
+	-->
+	<!-- 댓글 수정 -->
+	<update id="replyUpdate" parameterType="BoardReply">
+		update board_reply
+		   set rewriter = #{rewriter},
+		   		rememo = #{rememo},
+		   		redate = curdate()
+		 where reno = #{reno} 
+	</update>
+
+	<!-- 댓글 삭제 -->
+	<delete id="replyDelete" parameterType="BoardReply">
+		DELETE FROM board_reply 
+		 WHERE reno = #{reno} 
+	</delete>
+
+	<!--  조회수 증가 -->
+	<!--
+	<update id="updateReadCnt" parameterType="java.lang.Integer">
+		update board
+		   set readcnt = readcnt + 1
+		 where bno = #{bno}
+	</update>
+	-->
+
+
+
+
+
+
+
+  	
+</mapper>
